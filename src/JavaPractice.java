@@ -1,4 +1,5 @@
 import arraysandbasics.CountAbovePreviousAverage;
+import arraysandbasics.MergeIntervals;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -125,7 +126,7 @@ public class JavaPractice {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 0;
-        JLabel number = new JLabel("04");
+        JLabel number = new JLabel("05");
         number.setFont(DISPLAY.deriveFont(30f));
         number.setForeground(INK);
         stamp.add(number, constraints);
@@ -416,7 +417,7 @@ public class JavaPractice {
                             System.out.printf("Count Elements Greater Than Previous Average%nInput: %s%nOutput: %d%n%n",
                                 Arrays.toString(values), result);
                         }),
-                    new Challenge("04", "Binary Search", "Arrays", "Medium",
+                new Challenge("04", "Binary Search", "Arrays", "Medium",
                         "Find a target in a sorted array by halving the search range each step.", "BinarySearch.java", """
                                                                                                                        static int binarySearch(int[] values, int target) {
                                                                                                                            int low = 0;
@@ -428,7 +429,35 @@ public class JavaPractice {
                                                                                                                                else high = middle - 1;
                                                                                                                            }
                                                                                                                            return -1;
-                                                                                                                       }""", "binarySearch([1, 3, 5, 7, 9], 7)", "3"));
+                                                                                                                       }""", "binarySearch([1, 3, 5, 7, 9], 7)", "3"),
+                new Challenge("05", "Merge and Sort Intervals", "Arrays and Basic Problem Solving", "Medium",
+                        "Given an array of intervals [startTime, endTime], merge all overlapping intervals and return a sorted array of non-overlapping intervals.", "MergeIntervals.java",
+                        """
+                        static List<List<Integer>> mergeHighDefinitionIntervals(List<List<Integer>> intervals) {
+                            List<List<Integer>> sorted = new ArrayList<>(intervals.size());
+                            for (List<Integer> interval : intervals) {
+                                sorted.add(new ArrayList<>(interval));
+                            }
+                            sorted.sort((first, second) -> Integer.compare(first.get(0), second.get(0)));
+                            List<List<Integer>> merged = new ArrayList<>();
+                            for (List<Integer> interval : sorted) {
+                                if (merged.isEmpty() || interval.get(0) > merged.get(merged.size() - 1).get(1)) {
+                                    merged.add(interval);
+                                } else {
+                                    List<Integer> lastMerged = merged.get(merged.size() - 1);
+                                    lastMerged.set(1, Math.max(lastMerged.get(1), interval.get(1)));
+                                }
+                            }
+                            return merged;
+                        }
+                        """, "mergeHighDefinitionIntervals(List.of(List.of(1, 3), List.of(2, 6), List.of(8, 10), List.of(15, 18)))",
+                        "[[1, 6], [8, 10], [15, 18]]", () -> {
+                            List<List<Integer>> intervals = List.of(
+                                    List.of(1, 3), List.of(2, 6), List.of(8, 10), List.of(15, 18));
+                            List<List<Integer>> result = MergeIntervals.mergeHighDefinitionIntervals(intervals);
+                            System.out.printf("Merge and Sort Intervals%nInput: %s%nOutput: %s%n%n",
+                                    intervals, result);
+                        }));
     }
 
     private static final class Challenge {

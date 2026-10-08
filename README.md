@@ -12,7 +12,7 @@ javac -d classes (Get-ChildItem -Recurse src -Filter *.java).FullName
 java -cp classes JavaPractice
 ```
 
-Java source files live in category packages under `src`, and compiled classes are written to `classes`. The first category is `arraysandbasics`, with `CountAbovePreviousAverage` as its first challenge. Run it with `java -cp classes arraysandbasics.CountAbovePreviousAverage`. The window includes topic filters, text search, and expandable Java solutions with sample results.
+Java source files live in category packages under `src`, and compiled classes are written to `classes`. The first category is `arraysandbasics`, with `CountAbovePreviousAverage` and `MergeIntervals` as its first challenges. Run them with `java -cp classes arraysandbasics.CountAbovePreviousAverage` and `java -cp classes arraysandbasics.MergeIntervals`. The window includes topic filters, text search, and expandable Java solutions with sample results.
 
 ## Test
 
@@ -21,4 +21,5 @@ Unit tests mirror the source package structure under `test`. Compile the sources
 ```powershell
 javac -d classes (Get-ChildItem -Recurse -Path src,test -Filter *.java).FullName
 java -cp classes arraysandbasics.CountAbovePreviousAverageTest
+java -cp classes arraysandbasics.MergeIntervalsTest
 ```
