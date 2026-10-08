@@ -1,7 +1,14 @@
 # Java Practice
 
-A small library of coding challenge solutions, organized around a central index.
+A small desktop library of coding challenge solutions, built with Java Swing.
 
-Open [index.html](index.html) to browse the current demos. Each challenge entry includes its topic, difficulty, and an expandable Java solution with a sample result.
+## Run
 
-Add new challenge entries to the challenge index as the collection grows.
+Install a JDK, then compile and launch the application from this directory:
+
+```powershell
+javac JavaPractice.java
+java JavaPractice
+```
+
+The window includes topic filters, text search, and expandable Java solutions with sample results. Add new challenge entries to `createChallenges()` in `JavaPractice.java` as the collection grows.
