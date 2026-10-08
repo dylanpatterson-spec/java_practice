@@ -13,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -253,7 +254,7 @@ public class JavaPractice {
     private JPanel buildChallengeRow(Challenge challenge) {
         JPanel row = new JPanel(new BorderLayout(18, 0));
         row.setBackground(PAPER);
-        row.setAlignmentX(LEFT_ALIGNMENT);
+        row.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         row.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, LINE));
         row.setBorder(BorderFactory.createCompoundBorder(row.getBorder(), BorderFactory.createEmptyBorder(16, 0, 16, 0)));
 
