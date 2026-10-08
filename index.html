@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f3ed">
+  <title>Java Practice | Challenge Index</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f4f3ed;
+      --ink: #20231f;
+      --muted: #777b72;
+      --line: #d8d9d0;
+      --green: #c6f36b;
+      --green-dark: #26371a;
+      --coral: #e8785c;
+      --code: #20251f;
+      --mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+      --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background-color: var(--paper);
+      background-image: repeating-linear-gradient(0deg, transparent 0 31px, rgb(32 35 31 / 3%) 32px);
+      color: var(--ink);
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    a { color: inherit; }
+
+    .topbar {
+      display: flex;
+      min-height: 58px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 5vw, 76px);
+      border-bottom: 1px solid var(--line);
+      background: rgb(244 243 237 / 92%);
+    }
+
+    .wordmark {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .mark {
+      display: grid;
+      width: 25px;
+      aspect-ratio: 1;
+      place-items: center;
+      background: var(--green);
+      color: var(--green-dark);
+      font-size: 15px;
+    }
+
+    .topbar-note {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    main {
+      width: min(1040px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 32px;
+      align-items: end;
+      padding: clamp(42px, 8vw, 88px) 0 40px;
+    }
+
+    .kicker, .section-label, .meta, .count, .challenge-number {
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .kicker {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 12px;
+      color: #5d6950;
+      font-weight: 700;
+    }
+
+    .kicker::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--coral);
+      content: "";
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(42px, 7vw, 76px);
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .intro-copy {
+      max-width: 490px;
+      margin: 18px 0 0;
+      color: #5e625a;
+      font-size: 16px;
+    }
+
+    .index-stamp {
+      display: grid;
+      width: 104px;
+      height: 104px;
+      align-content: center;
+      justify-items: center;
+      border: 1px solid var(--ink);
+      transform: rotate(4deg);
+    }
+
+    .index-stamp strong {
+      font-family: var(--serif);
+      font-size: 38px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .index-stamp span {
+      margin-top: 6px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9px;
+      text-transform: uppercase;
+    }
+
+    .catalog {
+      border-top: 1px solid var(--ink);
+    }
+
+    .catalog-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 0 14px;
+    }
+
+    .catalog-heading h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 25px;
+      font-weight: 500;
+    }
+
+    .count { color: var(--muted); }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .filters { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .filter {
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      background: transparent;
+      color: #5e625a;
+      cursor: pointer;
+      font: 12px var(--mono);
+    }
+
+    .filter:hover, .filter[aria-pressed="true"] {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: white;
+    }
+
+    .search {
+      width: min(100%, 260px);
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: #fbfaf6;
+      color: var(--ink);
+      font: 13px "Segoe UI", Tahoma, sans-serif;
+    }
+
+    .search:focus-visible, .filter:focus-visible, summary:focus-visible {
+      outline: 2px solid #647c3d;
+      outline-offset: 3px;
+    }
+
+    .challenge-list { border-bottom: 1px solid var(--ink); }
+
+    .challenge {
+      display: grid;
+      grid-template-columns: 60px minmax(0, 1fr) 140px;
+      column-gap: 20px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+      animation: arrive 380ms both;
+    }
+
+    .challenge:last-child { border-bottom: 0; }
+    .challenge[hidden] { display: none; }
+    .challenge:nth-child(2) { animation-delay: 60ms; }
+    .challenge:nth-child(3) { animation-delay: 120ms; }
+
+    .challenge-number { padding-top: 5px; color: #9b9e94; }
+
+    .challenge-main { min-width: 0; }
+
+    .challenge-title-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px 12px;
+    }
+
+    .challenge h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .topic {
+      color: #697b4b;
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .challenge-description { margin: 7px 0 14px; color: #696d64; }
+
+    details { width: fit-content; }
+
+    summary {
+      display: flex;
+      min-height: 34px;
+      align-items: center;
+      gap: 10px;
+      padding: 0 11px;
+      border: 1px solid #9da28f;
+      border-radius: 2px;
+      color: var(--green-dark);
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 11px;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+    summary::after { color: var(--coral); content: "+"; font-size: 15px; }
+    details[open] summary::after { content: "-"; }
+    summary:hover { border-color: var(--ink); background: #eeefe6; }
+
+    .solution {
+      width: min(100%, 690px);
+      margin-top: 12px;
+      padding: 16px;
+      background: var(--code);
+      color: #e8ecdf;
+    }
+
+    .solution-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 10px;
+      color: #b3c298;
+      font: 10px var(--mono);
+      text-transform: uppercase;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 0;
+      font: 12px/1.65 var(--mono);
+      tab-size: 4;
+    }
+
+    code { font-family: inherit; }
+    .output { margin-top: 13px; color: #d5dbcb; }
+    .output span { color: var(--green); }
+
+    .difficulty {
+      justify-self: end;
+      align-self: start;
+      padding-top: 6px;
+      color: #767a71;
+      font: 10px var(--mono);
+      text-transform: uppercase;
+    }
+
+    .difficulty::before {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      content: "";
+    }
+
+    .difficulty.medium::before { background: #e8b765; }
+
+    .empty-state {
+      display: none;
+      padding: 44px 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty-state.visible { display: block; }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 22px 0 36px;
+      color: var(--muted);
+      font: 10px var(--mono);
+      text-transform: uppercase;
+    }
+
+    @keyframes arrive {
+      from { opacity: 0; transform: translateY(7px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 620px) {
+      .topbar { min-height: 52px; padding-inline: 20px; }
+      .topbar-note { display: none; }
+      main { width: min(100% - 32px, 480px); }
+      .intro { grid-template-columns: minmax(0, 1fr); padding: 48px 0 32px; }
+      .index-stamp { display: none; }
+      .intro-copy { font-size: 15px; }
+      .catalog-heading h2 { font-size: 23px; }
+      .controls { align-items: stretch; }
+      .search { width: 100%; }
+      .challenge { grid-template-columns: 32px minmax(0, 1fr); column-gap: 12px; padding: 19px 0; }
+      .challenge h3 { font-size: 22px; }
+      .difficulty { grid-column: 2; grid-row: 1; justify-self: start; margin: 0 0 7px; padding: 0; }
+      .challenge-main { grid-column: 2; }
+      .challenge-number { grid-row: 1 / span 2; }
+      .solution { padding: 13px; }
+      pre { font-size: 11px; }
+      footer { flex-direction: column; gap: 6px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="./" aria-label="Java Practice home">
+      <span class="mark" aria-hidden="true">J</span>
+      <span>JAVA PRACTICE</span>
+    </a>
+    <span class="topbar-note">A field guide to problem solving</span>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="kicker">Solution library / 001</p>
+        <h1 id="page-title">Java Practice</h1>
+        <p class="intro-copy">A growing index of coding challenges, with each solution kept close to the idea it demonstrates.</p>
+      </div>
+      <div class="index-stamp" aria-label="3 challenges in the index">
+        <strong>03</strong>
+        <span>challenges</span>
+      </div>
+    </section>
+
+    <section class="catalog" aria-labelledby="catalog-title">
+      <div class="catalog-heading">
+        <h2 id="catalog-title">Challenge index</h2>
+        <span class="count" id="result-count" aria-live="polite">03 entries</span>
+      </div>
+
+      <div class="controls">
+        <div class="filters" role="group" aria-label="Filter challenges by topic">
+          <button class="filter" type="button" data-filter="all" aria-pressed="true">All</button>
+          <button class="filter" type="button" data-filter="loops" aria-pressed="false">Loops</button>
+          <button class="filter" type="button" data-filter="strings" aria-pressed="false">Strings</button>
+          <button class="filter" type="button" data-filter="arrays" aria-pressed="false">Arrays</button>
+        </div>
+        <label>
+          <span hidden>Search challenges</span>
+          <input class="search" id="challenge-search" type="search" placeholder="Find a challenge..." autocomplete="off">
+        </label>
+      </div>
+
+      <div class="challenge-list" id="challenge-list">
+        <article class="challenge" data-topic="loops" data-search="fizzbuzz fizz buzz multiples loop divisibility">
+          <span class="challenge-number">01</span>
+          <div class="challenge-main">
+            <div class="challenge-title-line">
+              <h3>FizzBuzz</h3>
+              <span class="topic">Loops</span>
+            </div>
+            <p class="challenge-description">Replace multiples of three and five with their matching words.</p>
+            <details>
+              <summary>View Java solution</summary>
+              <div class="solution">
+                <p class="solution-label"><span>FizzBuzz.java</span><span>Java</span></p>
+                <pre><code>static String[] fizzBuzz(int limit) {
+    String[] result = new String[limit];
+    for (int index = 1; index &lt;= limit; index++) {
+        if (index % 15 == 0) result[index - 1] = "FizzBuzz";
+        else if (index % 3 == 0) result[index - 1] = "Fizz";
+        else if (index % 5 == 0) result[index - 1] = "Buzz";
+        else result[index - 1] = String.valueOf(index);
+    }
+    return result;
+}</code></pre>
+                <p class="output"><span>fizzBuzz(5)</span> &rarr; [1, 2, Fizz, 4, Buzz]</p>
+              </div>
+            </details>
+          </div>
+          <span class="difficulty">Easy</span>
+        </article>
+
+        <article class="challenge" data-topic="strings" data-search="palindrome string reverse characters normalize">
+          <span class="challenge-number">02</span>
+          <div class="challenge-main">
+            <div class="challenge-title-line">
+              <h3>Palindrome Check</h3>
+              <span class="topic">Strings</span>
+            </div>
+            <p class="challenge-description">Check whether text reads the same in both directions, ignoring punctuation and case.</p>
+            <details>
+              <summary>View Java solution</summary>
+              <div class="solution">
+                <p class="solution-label"><span>Palindrome.java</span><span>Java</span></p>
+                <pre><code>static boolean isPalindrome(String text) {
+    int left = 0;
+    int right = text.length() - 1;
+    while (left &lt; right) {
+        while (left &lt; right &amp;&amp; !Character.isLetterOrDigit(text.charAt(left))) left++;
+        while (left &lt; right &amp;&amp; !Character.isLetterOrDigit(text.charAt(right))) right--;
+        if (Character.toLowerCase(text.charAt(left)) != Character.toLowerCase(text.charAt(right))) return false;
+        left++;
+        right--;
+    }
+    return true;
+}</code></pre>
+                <p class="output"><span>isPalindrome("A man, a plan, a canal: Panama")</span> &rarr; true</p>
+              </div>
+            </details>
+          </div>
+          <span class="difficulty">Easy</span>
+        </article>
+
+        <article class="challenge" data-topic="arrays" data-search="binary search sorted array logarithmic index">
+          <span class="challenge-number">03</span>
+          <div class="challenge-main">
+            <div class="challenge-title-line">
+              <h3>Binary Search</h3>
+              <span class="topic">Arrays</span>
+            </div>
+            <p class="challenge-description">Find a target in a sorted array by halving the search range each step.</p>
+            <details>
+              <summary>View Java solution</summary>
+              <div class="solution">
+                <p class="solution-label"><span>BinarySearch.java</span><span>Java</span></p>
+                <pre><code>static int binarySearch(int[] values, int target) {
+    int low = 0;
+    int high = values.length - 1;
+    while (low &lt;= high) {
+        int middle = low + (high - low) / 2;
+        if (values[middle] == target) return middle;
+        if (values[middle] &lt; target) low = middle + 1;
+        else high = middle - 1;
+    }
+    return -1;
+}</code></pre>
+                <p class="output"><span>binarySearch([1, 3, 5, 7, 9], 7)</span> &rarr; 3</p>
+              </div>
+            </details>
+          </div>
+          <span class="difficulty medium">Medium</span>
+        </article>
+      </div>
+      <p class="empty-state" id="empty-state">No challenges match that search.</p>
+    </section>
+
+    <footer>
+      <span>Java Practice / Solution Library</span>
+      <span>Built for curiosity and repetition</span>
+    </footer>
+  </main>
+
+  <script>
+    const challengeCards = [...document.querySelectorAll(".challenge")];
+    const filterButtons = [...document.querySelectorAll(".filter")];
+    const searchInput = document.querySelector("#challenge-search");
+    const resultCount = document.querySelector("#result-count");
+    const emptyState = document.querySelector("#empty-state");
+    let activeTopic = "all";
+
+    function updateCatalog() {
+      const query = searchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      for (const card of challengeCards) {
+        const matchesTopic = activeTopic === "all" || card.dataset.topic === activeTopic;
+        const matchesQuery = card.dataset.search.includes(query) || card.textContent.toLowerCase().includes(query);
+        card.hidden = !(matchesTopic && matchesQuery);
+        if (!card.hidden) visibleCount++;
+      }
+
+      resultCount.textContent = `${String(visibleCount).padStart(2, "0")} ${visibleCount === 1 ? "entry" : "entries"}`;
+      emptyState.classList.toggle("visible", visibleCount === 0);
+    }
+
+    for (const button of filterButtons) {
+      button.addEventListener("click", () => {
+        activeTopic = button.dataset.filter;
+        for (const option of filterButtons) {
+          option.setAttribute("aria-pressed", String(option === button));
+        }
+        updateCatalog();
+      });
+    }
+
+    searchInput.addEventListener("input", updateCatalog);
+  </script>
+</body>
+</html>
