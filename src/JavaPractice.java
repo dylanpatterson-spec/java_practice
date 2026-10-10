@@ -1,7 +1,9 @@
 import arraysandbasics.CountAbovePreviousAverage;
 import arraysandbasics.MergeIntervals;
 import arraysandbasics.SubarraySumBoundedMax;
+import stringsandpatterns.MaxUniqueSubstringLengthInSession;
 import stringsandpatterns.PalindromeByFilteringNonLetters;
+import stringsandpatterns.SmallestSubstringContainingAllPatterns;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -420,7 +422,97 @@ public class JavaPractice {
                             System.out.printf("Check Palindrome by Filtering Non-Letters%nInput: %s%nOutput: %b%n%n",
                                     input, result);
                         }),
-                new Challenge("03", "Binary Search", "Arrays", "Medium",
+                new Challenge("03", "Max Unique Substring Length in a Session",
+                        "Strings and Pattern Matching", "Medium",
+                        "Given a string of lowercase letters with sessions separated by '*' characters, find the maximum length of a substring with all distinct letters within any single session.",
+                        "MaxUniqueSubstringLengthInSession.java",
+                        """
+                                static int maxUniqueSubstringLength(String sessions) {
+                                    int[] lastSeen = new int[26];
+                                    Arrays.fill(lastSeen, -1);
+                                    int windowStart = 0;
+                                    int maximumLength = 0;
+                                    for (int index = 0; index < sessions.length(); index++) {
+                                        char character = sessions.charAt(index);
+                                        if (character == '*') {
+                                            windowStart = index + 1;
+                                            continue;
+                                        }
+                                        int letterIndex = character - 'a';
+                                        windowStart = Math.max(windowStart, lastSeen[letterIndex] + 1);
+                                        lastSeen[letterIndex] = index;
+                                        maximumLength = Math.max(maximumLength, index - windowStart + 1);
+                                    }
+                                    return maximumLength;
+                                }
+                                """,
+                        "maxUniqueSubstringLength(\"abcabcbb*abcdef\")", "6", () -> {
+                            String sessions = "abcabcbb*abcdef";
+                            int result = MaxUniqueSubstringLengthInSession.maxUniqueSubstringLength(sessions);
+                            System.out.printf("Max Unique Substring Length in a Session%nInput: %s%nOutput: %d%n%n",
+                                    sessions, result);
+                        }),
+                new Challenge("04", "Smallest Substring Containing All Patterns",
+                        "Strings and Pattern Matching", "Medium",
+                        "Given a string S and a list of patterns, find the smallest substring window [l, r] such that each pattern appears at least once within S[l..r]. Return the pair of indices or [-1, -1] if no such window exists.",
+                        "SmallestSubstringContainingAllPatterns.java",
+                        """
+                                static List<Integer> findSmallestWindow(List<String> patterns, String S) {
+                                    if (S.isEmpty()) return List.of(-1, -1);
+                                    List<List<Integer>> occurrencesByPattern = new ArrayList<>();
+                                    TreeSet<Integer> candidateStarts = new TreeSet<>();
+                                    List<String> requiredPatterns = new ArrayList<>();
+                                    for (String pattern : patterns) {
+                                        List<Integer> starts = new ArrayList<>();
+                                        for (int start = S.indexOf(pattern); start >= 0;
+                                                start = S.indexOf(pattern, start + 1)) {
+                                            starts.add(start);
+                                            candidateStarts.add(start);
+                                        }
+                                        if (starts.isEmpty() && !pattern.isEmpty()) return List.of(-1, -1);
+                                        if (pattern.isEmpty()) continue;
+                                        requiredPatterns.add(pattern);
+                                        occurrencesByPattern.add(starts);
+                                    }
+                                    if (requiredPatterns.isEmpty()) return List.of(0, 0);
+                                    int bestStart = -1;
+                                    int bestEnd = -1;
+                                    int bestLength = Integer.MAX_VALUE;
+                                    for (int candidateStart : candidateStarts) {
+                                        int candidateEnd = candidateStart;
+                                        boolean coversAllPatterns = true;
+                                        for (int patternIndex = 0; patternIndex < requiredPatterns.size(); patternIndex++) {
+                                            List<Integer> starts = occurrencesByPattern.get(patternIndex);
+                                            int occurrenceIndex = Collections.binarySearch(starts, candidateStart);
+                                            if (occurrenceIndex < 0) occurrenceIndex = -occurrenceIndex - 1;
+                                            if (occurrenceIndex == starts.size()) {
+                                                coversAllPatterns = false;
+                                                break;
+                                            }
+                                            int end = starts.get(occurrenceIndex)
+                                                    + requiredPatterns.get(patternIndex).length() - 1;
+                                            candidateEnd = Math.max(candidateEnd, end);
+                                        }
+                                        int length = candidateEnd - candidateStart + 1;
+                                        if (coversAllPatterns && length < bestLength) {
+                                            bestStart = candidateStart;
+                                            bestEnd = candidateEnd;
+                                            bestLength = length;
+                                        }
+                                    }
+                                    return List.of(bestStart, bestEnd);
+                                }
+                                """,
+                        "findSmallestWindow(List.of(\"ab\", \"bc\"), \"abxxbcabc\")", "[6, 8]", () -> {
+                            String S = "abxxbcabc";
+                            List<String> patterns = List.of("ab", "bc");
+                            List<Integer> window = SmallestSubstringContainingAllPatterns.findSmallestWindow(
+                                    patterns, S);
+                            System.out.printf(
+                                    "Smallest Substring Containing All Patterns%nInput: %s%nOutput: %s%n%n",
+                                    S, window);
+                        }),
+                new Challenge("05", "Binary Search", "Arrays", "Medium",
                         "Find a target in a sorted array by halving the search range each step.", "BinarySearch.java",
                         """
                                 static int binarySearch(int[] values, int target) {
@@ -434,7 +526,7 @@ public class JavaPractice {
                                     }
                                     return -1;
                                 }""", "binarySearch([1, 3, 5, 7, 9], 7)", "3"),
-                new Challenge("04", "Count Elements Greater Than Previous Average", "Arrays and Basic Problem Solving",
+                new Challenge("06", "Count Elements Greater Than Previous Average", "Arrays and Basic Problem Solving",
                         "Easy",
                         "Given a list of positive integers, return the number of elements strictly greater than the average of all previous elements. Skip the first element.",
                         "CountAbovePreviousAverage.java",
@@ -456,7 +548,7 @@ public class JavaPractice {
                             System.out.printf("Count Elements Greater Than Previous Average%nInput: %s%nOutput: %d%n%n",
                                     responseTimes, result);
                         }),
-                new Challenge("05", "Merge and Sort Intervals", "Arrays and Basic Problem Solving", "Medium",
+                new Challenge("07", "Merge and Sort Intervals", "Arrays and Basic Problem Solving", "Medium",
                         "Given an array of intervals [startTime, endTime], merge all overlapping intervals and return a sorted array of non-overlapping intervals.",
                         "MergeIntervals.java",
                         """
@@ -486,7 +578,7 @@ public class JavaPractice {
                             System.out.printf("Merge and Sort Intervals%nInput: %s%nOutput: %s%n%n",
                                     intervals, result);
                         }),
-                new Challenge("06", "Subarrays with Given Sum and Bounded Maximum",
+                new Challenge("08", "Subarrays with Given Sum and Bounded Maximum",
                         "Arrays and Basic Problem Solving", "Medium",
                         "Given a list of integers nums and long integers k and M, count the number of contiguous subarrays whose sum equals k and whose maximum element is at most M.",
                         "SubarraySumBoundedMax.java",
