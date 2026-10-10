@@ -1,5 +1,7 @@
 import arraysandbasics.CountAbovePreviousAverage;
 import arraysandbasics.MergeIntervals;
+import arraysandbasics.SubarraySumBoundedMax;
+import stringsandpatterns.PalindromeByFilteringNonLetters;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -50,9 +52,9 @@ public class JavaPractice {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (ClassNotFoundException
-                     | InstantiationException
-                     | IllegalAccessException
-                     | UnsupportedLookAndFeelException ignored) {
+                    | InstantiationException
+                    | IllegalAccessException
+                    | UnsupportedLookAndFeelException ignored) {
             }
             new JavaPractice().showWindow();
         });
@@ -110,7 +112,8 @@ public class JavaPractice {
         JLabel title = new JLabel("Java Practice");
         title.setFont(DISPLAY);
         title.setForeground(INK);
-        JLabel description = new JLabel("A growing index of coding challenges, with each solution kept close to the idea it demonstrates.");
+        JLabel description = new JLabel(
+                "A growing index of coding challenges, with each solution kept close to the idea it demonstrates.");
         description.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         description.setForeground(new Color(94, 98, 90));
         text.add(kicker);
@@ -163,8 +166,10 @@ public class JavaPractice {
                 BorderFactory.createEmptyBorder(8, 0, 8, 0)));
         JPanel filters = new JPanel();
         filters.setBackground(PAPER);
-        for (String topic : Arrays.asList("All", "Loops", "Strings", "Arrays", "Arrays and Basic Problem Solving")) {
-            String label = topic.equals("Arrays and Basic Problem Solving") ? "Arrays + Basics" : topic;
+        for (String topic : Arrays.asList("All", "Loops", "Strings and Pattern Matching", "Arrays",
+                "Arrays and Basic Problem Solving")) {
+            String label = topic.equals("Arrays and Basic Problem Solving") ? "Arrays + Basics"
+                    : topic.equals("Strings and Pattern Matching") ? "Strings + Patterns" : topic;
             JButton filter = new JButton(label);
             filter.putClientProperty("topic", topic);
             filter.setFont(MONO.deriveFont(10f));
@@ -194,11 +199,19 @@ public class JavaPractice {
         search.setPreferredSize(new Dimension(230, 34));
         search.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent event) { refreshChallenges(); }
+            public void insertUpdate(DocumentEvent event) {
+                refreshChallenges();
+            }
+
             @Override
-            public void removeUpdate(DocumentEvent event) { refreshChallenges(); }
+            public void removeUpdate(DocumentEvent event) {
+                refreshChallenges();
+            }
+
             @Override
-            public void changedUpdate(DocumentEvent event) { refreshChallenges(); }
+            public void changedUpdate(DocumentEvent event) {
+                refreshChallenges();
+            }
         });
         controls.add(filters, BorderLayout.WEST);
         controls.add(search, BorderLayout.EAST);
@@ -241,13 +254,15 @@ public class JavaPractice {
     }
 
     private void refreshChallenges() {
-        if (challengeList == null) return;
+        if (challengeList == null)
+            return;
         String query = search.getText().trim().toLowerCase();
         List<Challenge> matches = new ArrayList<>();
         for (Challenge challenge : challenges) {
             boolean topicMatches = activeTopic.equals("All") || challenge.topic.equals(activeTopic);
             boolean queryMatches = query.isEmpty() || challenge.searchableText().contains(query);
-            if (topicMatches && queryMatches) matches.add(challenge);
+            if (topicMatches && queryMatches)
+                matches.add(challenge);
         }
 
         challengeList.removeAll();
@@ -265,7 +280,8 @@ public class JavaPractice {
         row.setBackground(PAPER);
         row.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         row.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, LINE));
-        row.setBorder(BorderFactory.createCompoundBorder(row.getBorder(), BorderFactory.createEmptyBorder(16, 0, 16, 0)));
+        row.setBorder(
+                BorderFactory.createCompoundBorder(row.getBorder(), BorderFactory.createEmptyBorder(16, 0, 16, 0)));
 
         JLabel number = new JLabel(challenge.number);
         number.setFont(MONO.deriveFont(10f));
@@ -347,7 +363,8 @@ public class JavaPractice {
         codePanel.setBackground(CODE);
         codePanel.add(fileName, BorderLayout.NORTH);
         codePanel.add(codeScroll, BorderLayout.CENTER);
-        JLabel output = new JLabel("<html><font color='#c6f36b'>" + challenge.example + "</font>  →  " + challenge.output + "</html>");
+        JLabel output = new JLabel(
+                "<html><font color='#c6f36b'>" + challenge.example + "</font>  →  " + challenge.output + "</html>");
         output.setFont(MONO.deriveFont(10f));
         output.setForeground(new Color(213, 219, 203));
         output.setBorder(BorderFactory.createEmptyBorder(9, 0, 0, 0));
@@ -370,93 +387,134 @@ public class JavaPractice {
                 new Challenge("01", "FizzBuzz", "Loops", "Easy",
                         "Replace multiples of three and five with their matching words.", "FizzBuzz.java",
                         """
-                        static String[] fizzBuzz(int limit) {
-                            String[] result = new String[limit];
-                            for (int index = 1; index <= limit; index++) {
-                                if (index % 15 == 0) result[index - 1] = "FizzBuzz";
-                                else if (index % 3 == 0) result[index - 1] = "Fizz";
-                                else if (index % 5 == 0) result[index - 1] = "Buzz";
-                                else result[index - 1] = String.valueOf(index);
-                            }
-                            return result;
-                        }
-                        """, "fizzBuzz(5)", "[1, 2, Fizz, 4, Buzz]"),
-                new Challenge("02", "Palindrome Check", "Strings", "Easy",
-                        "Check whether text reads the same in both directions, ignoring punctuation and case.", "Palindrome.java",
+                                static String[] fizzBuzz(int limit) {
+                                    String[] result = new String[limit];
+                                    for (int index = 1; index <= limit; index++) {
+                                        if (index % 15 == 0) result[index - 1] = "FizzBuzz";
+                                        else if (index % 3 == 0) result[index - 1] = "Fizz";
+                                        else if (index % 5 == 0) result[index - 1] = "Buzz";
+                                        else result[index - 1] = String.valueOf(index);
+                                    }
+                                    return result;
+                                }
+                                """, "fizzBuzz(5)", "[1, 2, Fizz, 4, Buzz]"),
+                new Challenge("02", "Check Palindrome by Filtering Non-Letters",
+                        "Strings and Pattern Matching", "Easy",
+                        "Given a string containing letters, digits, and symbols, determine if it reads the same forwards and backwards when considering only alphabetic characters (case-insensitive).",
+                        "PalindromeByFilteringNonLetters.java",
                         """
-                        static boolean isPalindrome(String text) {
-                            int left = 0;
-                            int right = text.length() - 1;
-                            while (left < right) {
-                                while (left < right && !Character.isLetterOrDigit(text.charAt(left))) left++;
-                                while (left < right && !Character.isLetterOrDigit(text.charAt(right))) right--;
-                                if (Character.toLowerCase(text.charAt(left)) != Character.toLowerCase(text.charAt(right))) return false;
-                                left++;
-                                right--;
-                            }
-                            return true;
-                        }
-                        """, "isPalindrome(\"A man, a plan, a canal: Panama\")", "true"),
-                    new Challenge("03", "Count Elements Greater Than Previous Average", "Arrays and Basic Problem Solving", "Easy",
-                        "Given an array of positive integers, return the number of elements strictly greater than the average of all previous elements. Skip the first element.",
+                                static boolean isPalindrome(String input) {
+                                    int[] letters = input.codePoints()
+                                        .filter(Character::isLetter)
+                                        .map(Character::toLowerCase)
+                                        .toArray();
+                                    for (int left = 0, right = letters.length - 1; left < right; left++, right--) {
+                                    if (letters[left] != letters[right]) return false;
+                                            }
+                                            return true;
+                                        }
+                                        """,
+                        "isPalindrome(\"A man, a plan, a canal: Panama\")", "true", () -> {
+                            String input = "A man, a plan, a canal: Panama";
+                            boolean result = PalindromeByFilteringNonLetters.isPalindrome(input);
+                            System.out.printf("Check Palindrome by Filtering Non-Letters%nInput: %s%nOutput: %b%n%n",
+                                    input, result);
+                        }),
+                new Challenge("03", "Binary Search", "Arrays", "Medium",
+                        "Find a target in a sorted array by halving the search range each step.", "BinarySearch.java",
+                        """
+                                static int binarySearch(int[] values, int target) {
+                                    int low = 0;
+                                    int high = values.length - 1;
+                                    while (low <= high) {
+                                        int middle = low + (high - low) / 2;
+                                        if (values[middle] == target) return middle;
+                                        if (values[middle] < target) low = middle + 1;
+                                        else high = middle - 1;
+                                    }
+                                    return -1;
+                                }""", "binarySearch([1, 3, 5, 7, 9], 7)", "3"),
+                new Challenge("04", "Count Elements Greater Than Previous Average", "Arrays and Basic Problem Solving",
+                        "Easy",
+                        "Given a list of positive integers, return the number of elements strictly greater than the average of all previous elements. Skip the first element.",
                         "CountAbovePreviousAverage.java",
                         """
-                        static int countElementsGreaterThanPreviousAverage(int[] values) {
-                            int count = 0;
-                            long previousSum = 0;
-                            for (int index = 0; index < values.length; index++) {
-                            if (index > 0 && (long) values[index] * index > previousSum) count++;
-                            previousSum += values[index];
-                            }
-                            return count;
-                        }
-                        """, "countElementsGreaterThanPreviousAverage([10, 20, 30, 25, 40])", "4",
-                        () -> {
-                            int[] values = {10, 20, 30, 25, 40};
-                            int result = CountAbovePreviousAverage.countElementsGreaterThanPreviousAverage(values);
-                            System.out.printf("Count Elements Greater Than Previous Average%nInput: %s%nOutput: %d%n%n",
-                                Arrays.toString(values), result);
-                        }),
-                new Challenge("04", "Binary Search", "Arrays", "Medium",
-                        "Find a target in a sorted array by halving the search range each step.", "BinarySearch.java", """
-                                                                                                                       static int binarySearch(int[] values, int target) {
-                                                                                                                           int low = 0;
-                                                                                                                           int high = values.length - 1;
-                                                                                                                           while (low <= high) {
-                                                                                                                               int middle = low + (high - low) / 2;
-                                                                                                                               if (values[middle] == target) return middle;
-                                                                                                                               if (values[middle] < target) low = middle + 1;
-                                                                                                                               else high = middle - 1;
-                                                                                                                           }
-                                                                                                                           return -1;
-                                                                                                                       }""", "binarySearch([1, 3, 5, 7, 9], 7)", "3"),
-                new Challenge("05", "Merge and Sort Intervals", "Arrays and Basic Problem Solving", "Medium",
-                        "Given an array of intervals [startTime, endTime], merge all overlapping intervals and return a sorted array of non-overlapping intervals.", "MergeIntervals.java",
-                        """
-                        static List<List<Integer>> mergeHighDefinitionIntervals(List<List<Integer>> intervals) {
-                            List<List<Integer>> sorted = new ArrayList<>(intervals.size());
-                            for (List<Integer> interval : intervals) {
-                                sorted.add(new ArrayList<>(interval));
-                            }
-                            sorted.sort((first, second) -> Integer.compare(first.get(0), second.get(0)));
-                            List<List<Integer>> merged = new ArrayList<>();
-                            for (List<Integer> interval : sorted) {
-                                if (merged.isEmpty() || interval.get(0) > merged.get(merged.size() - 1).get(1)) {
-                                    merged.add(interval);
-                                } else {
-                                    List<Integer> lastMerged = merged.get(merged.size() - 1);
-                                    lastMerged.set(1, Math.max(lastMerged.get(1), interval.get(1)));
+                                static int countElementsGreaterThanPreviousAverage(List<Integer> responseTimes) {
+                                    int count = 0;
+                                    long previousSum = 0;
+                                    for (int index = 0; index < responseTimes.size(); index++) {
+                                    if (index > 0 && (long) responseTimes.get(index) * index > previousSum) count++;
+                                    previousSum += responseTimes.get(index);
+                                    }
+                                    return count;
                                 }
-                            }
-                            return merged;
-                        }
-                        """, "mergeHighDefinitionIntervals(List.of(List.of(1, 3), List.of(2, 6), List.of(8, 10), List.of(15, 18)))",
+                                """, "countElementsGreaterThanPreviousAverage(List.of(10, 20, 30, 25, 40))", "4",
+                        () -> {
+                            List<Integer> responseTimes = List.of(10, 20, 30, 25, 40);
+                            int result = CountAbovePreviousAverage
+                                    .countElementsGreaterThanPreviousAverage(responseTimes);
+                            System.out.printf("Count Elements Greater Than Previous Average%nInput: %s%nOutput: %d%n%n",
+                                    responseTimes, result);
+                        }),
+                new Challenge("05", "Merge and Sort Intervals", "Arrays and Basic Problem Solving", "Medium",
+                        "Given an array of intervals [startTime, endTime], merge all overlapping intervals and return a sorted array of non-overlapping intervals.",
+                        "MergeIntervals.java",
+                        """
+                                static List<List<Integer>> mergeHighDefinitionIntervals(List<List<Integer>> intervals) {
+                                    List<List<Integer>> sorted = new ArrayList<>(intervals.size());
+                                    for (List<Integer> interval : intervals) {
+                                        sorted.add(new ArrayList<>(interval));
+                                    }
+                                    sorted.sort((first, second) -> Integer.compare(first.get(0), second.get(0)));
+                                    List<List<Integer>> merged = new ArrayList<>();
+                                    for (List<Integer> interval : sorted) {
+                                        if (merged.isEmpty() || interval.get(0) > merged.get(merged.size() - 1).get(1)) {
+                                            merged.add(interval);
+                                        } else {
+                                            List<Integer> lastMerged = merged.get(merged.size() - 1);
+                                            lastMerged.set(1, Math.max(lastMerged.get(1), interval.get(1)));
+                                        }
+                                    }
+                                    return merged;
+                                }
+                                """,
+                        "mergeHighDefinitionIntervals(List.of(List.of(1, 3), List.of(2, 6), List.of(8, 10), List.of(15, 18)))",
                         "[[1, 6], [8, 10], [15, 18]]", () -> {
                             List<List<Integer>> intervals = List.of(
                                     List.of(1, 3), List.of(2, 6), List.of(8, 10), List.of(15, 18));
                             List<List<Integer>> result = MergeIntervals.mergeHighDefinitionIntervals(intervals);
                             System.out.printf("Merge and Sort Intervals%nInput: %s%nOutput: %s%n%n",
                                     intervals, result);
+                        }),
+                new Challenge("06", "Subarrays with Given Sum and Bounded Maximum",
+                        "Arrays and Basic Problem Solving", "Medium",
+                        "Given a list of integers nums and long integers k and M, count the number of contiguous subarrays whose sum equals k and whose maximum element is at most M.",
+                        "SubarraySumBoundedMax.java",
+                        """
+                                static long countSubarrays(List<Integer> nums, long k, long M) {
+                                    Map<Long, Long> prefixCounts = new HashMap<>();
+                                    prefixCounts.put(0L, 1L);
+                                    long prefixSum = 0;
+                                    long count = 0;
+                                    for (int num : nums) {
+                                        if (num > M) {
+                                            prefixSum = 0;
+                                            prefixCounts.clear();
+                                            prefixCounts.put(0L, 1L);
+                                            continue;
+                                        }
+                                        prefixSum += num;
+                                        count += prefixCounts.getOrDefault(prefixSum - k, 0L);
+                                        prefixCounts.merge(prefixSum, 1L, Long::sum);
+                                    }
+                                    return count;
+                                }
+                                """,
+                        "countSubarrays(List.of(1, 2, 1, 3, 1, 2), 3, 2)", "3", () -> {
+                            List<Integer> nums = List.of(1, 2, 1, 3, 1, 2);
+                            long result = SubarraySumBoundedMax.countSubarrays(nums, 3, 2);
+                            System.out.printf("Subarrays with Given Sum and Bounded Maximum%nInput: %s%nOutput: %d%n%n",
+                                    nums, result);
                         }));
     }
 
@@ -473,12 +531,12 @@ public class JavaPractice {
         private final Runnable consoleAction;
 
         private Challenge(String number, String title, String topic, String difficulty, String description,
-                          String fileName, String solution, String example, String output) {
+                String fileName, String solution, String example, String output) {
             this(number, title, topic, difficulty, description, fileName, solution, example, output, null);
         }
 
         private Challenge(String number, String title, String topic, String difficulty, String description,
-                          String fileName, String solution, String example, String output, Runnable consoleAction) {
+                String fileName, String solution, String example, String output, Runnable consoleAction) {
             this.number = number;
             this.title = title;
             this.topic = topic;
