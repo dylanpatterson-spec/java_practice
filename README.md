@@ -14,6 +14,12 @@ java -cp classes JavaPractice
 
 Java source files live in category packages under `src`, and compiled classes are written to `classes`. The first category is `arraysandbasics`, with `CountAbovePreviousAverage` and `MergeIntervals` as its first challenges. Run them with `java -cp classes arraysandbasics.CountAbovePreviousAverage` and `java -cp classes arraysandbasics.MergeIntervals`. The window includes topic filters, text search, and expandable Java solutions with sample results.
 
+The `stacksandqueues` category includes `ValidateProperlyNestedBrackets`; run it with `java -cp classes stacksandqueues.ValidateProperlyNestedBrackets`.
+
+It also includes `NextGreaterElementWithPositionOffset`; run it with `java -cp classes stacksandqueues.NextGreaterElementWithPositionOffset`.
+
+`MaxAreaUnderHistogramAfterRemovingOneBar` is also in `stacksandqueues`; run it with `java -cp classes stacksandqueues.MaxAreaUnderHistogramAfterRemovingOneBar`.
+
 ## Test
 
 Unit tests mirror the source package structure under `test`. Compile the sources and tests, then run the test class:
@@ -22,4 +28,7 @@ Unit tests mirror the source package structure under `test`. Compile the sources
 javac -d classes (Get-ChildItem -Recurse -Path src,test -Filter *.java).FullName
 java -cp classes arraysandbasics.CountAbovePreviousAverageTest
 java -cp classes arraysandbasics.MergeIntervalsTest
+java -cp classes stacksandqueues.ValidateProperlyNestedBracketsTest
+java -cp classes stacksandqueues.NextGreaterElementWithPositionOffsetTest
+java -cp classes stacksandqueues.MaxAreaUnderHistogramAfterRemovingOneBarTest
 ```

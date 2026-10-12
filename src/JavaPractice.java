@@ -5,6 +5,9 @@ import linkedlists.RemoveKthFromEnd;
 import linkedlists.RemoveConsecutiveDuplicatesFromSortedLinkedList;
 import linkedlists.ReverseEvenIndexedNodesAndAppend;
 import linkedlists.data.SinglyLinkedListNode;
+import stacksandqueues.NextGreaterElementWithPositionOffset;
+import stacksandqueues.MaxAreaUnderHistogramAfterRemovingOneBar;
+import stacksandqueues.ValidateProperlyNestedBrackets;
 import stringsandpatterns.MaxUniqueSubstringLengthInSession;
 import stringsandpatterns.PalindromeByFilteringNonLetters;
 import stringsandpatterns.SmallestSubstringContainingAllPatterns;
@@ -135,7 +138,7 @@ public class JavaPractice {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 0;
-        JLabel number = new JLabel("11");
+        JLabel number = new JLabel("14");
         number.setFont(DISPLAY.deriveFont(30f));
         number.setForeground(INK);
         stamp.add(number, constraints);
@@ -173,9 +176,10 @@ public class JavaPractice {
         JPanel filters = new JPanel();
         filters.setBackground(PAPER);
         for (String topic : Arrays.asList("All", "Loops", "Strings and Pattern Matching", "Arrays",
-                "Arrays and Basic Problem Solving", "Linked Lists")) {
+                "Arrays and Basic Problem Solving", "Linked Lists", "Stacks and Queues")) {
             String label = topic.equals("Arrays and Basic Problem Solving") ? "Arrays + Basics"
-                    : topic.equals("Strings and Pattern Matching") ? "Strings + Patterns" : topic;
+                    : topic.equals("Strings and Pattern Matching") ? "Strings + Patterns"
+                            : topic.equals("Stacks and Queues") ? "Stacks + Queues" : topic;
             JButton filter = new JButton(label);
             filter.putClientProperty("topic", topic);
             filter.setFont(MONO.deriveFont(10f));
@@ -730,6 +734,165 @@ public class JavaPractice {
                             }
                             System.out.printf("Remove Consecutive Duplicates from Sorted Linked List%nOutput: %s%n%n",
                                     values);
+                        }),
+                new Challenge("12", "Validate Properly Nested Brackets", "Stacks and Queues", "Easy",
+                        "Given a string, check if all brackets ('()', '{}', '[]') are properly matched and nested. Return true if valid, otherwise return false.",
+                        "ValidateProperlyNestedBrackets.java",
+                        """
+                                static boolean validateBrackets(String input) {
+                                    if (input == null) return false;
+                                            Deque<Character> openings = new ArrayDeque<>();
+                                            for (char character : input.toCharArray()) {
+                                                if (character == '(' || character == '{' || character == '[') {
+                                                    openings.push(character);
+                                                } else if (character == ')' || character == '}' || character == ']') {
+                                                        if (openings.isEmpty()) return false;
+                                                    char opening = openings.pop();
+                                                    if (opening == '(' && character != ')'
+                                                            || opening == '{' && character != '}'
+                                                            || opening == '[' && character != ']') return false;
+                                                }
+                                            }
+                                            return openings.isEmpty();
+                                        }
+                                        """,
+                        "validateBrackets(\"{[()]}\")", "true", () -> {
+                            String input = "{[()]}";
+                            boolean result = ValidateProperlyNestedBrackets.validateBrackets(input);
+                            System.out.printf("Validate Properly Nested Brackets%nInput: %s%nOutput: %b%n%n",
+                                    input, result);
+                        }),
+                new Challenge("13", "Next Greater Element with Position Offset", "Stacks and Queues", "Medium",
+                        "Given an integer array readings, return an array result where result[i] = [value, distance], with value being the next greater element to the right of readings[i] and distance being the index difference. If no greater element exists, return [-1, -1].",
+                        "NextGreaterElementWithPositionOffset.java",
+                        """
+                                static List<List<Integer>> nextGreaterElementWithPositionOffset(List<Integer> readings) {
+                                    List<Integer> values = new ArrayList<>(readings);
+                                    List<List<Integer>> result = new ArrayList<>(values.size());
+                                    for (int index = 0; index < values.size(); index++) {
+                                        result.add(List.of(-1, -1));
+                                    }
+                                    Deque<Integer> pendingIndices = new ArrayDeque<>();
+                                    for (int index = 0; index < values.size(); index++) {
+                                        while (!pendingIndices.isEmpty()
+                                                && values.get(index) > values.get(pendingIndices.peek())) {
+                                            int previousIndex = pendingIndices.pop();
+                                            result.set(previousIndex, List.of(values.get(index), index - previousIndex));
+                                        }
+                                        pendingIndices.push(index);
+                                    }
+                                    return result;
+                                }
+                                """,
+                        "nextGreaterElementWithPositionOffset([2, 1, 2, 4, 3])",
+                        "[[4, 3], [2, 1], [4, 1], [-1, -1], [-1, -1]]", () -> {
+                            List<Integer> readings = List.of(2, 1, 2, 4, 3);
+                            List<List<Integer>> result = NextGreaterElementWithPositionOffset
+                                    .nextGreaterElementWithPositionOffset(readings);
+                            System.out.printf("Next Greater Element with Position Offset%nInput: %s%nOutput: %s%n%n",
+                                    readings, result);
+                        }),
+                new Challenge("14", "Max Area Under Histogram After Removing One Bar", "Stacks and Queues", "Hard",
+                        "Given a list of integers heights, find the maximum rectangle area under the histogram after optionally removing at most one element.",
+                        "MaxAreaUnderHistogramAfterRemovingOneBar.java",
+                        """
+                                static long maxAreaAfterRemovingOneBar(List<Integer> heights) {
+                                    if (heights == null || heights.isEmpty()) return 0;
+                                    int[] values = heights.stream().mapToInt(Integer::intValue).toArray();
+                                    MinSegmentTree minimums = new MinSegmentTree(values);
+                                    long maximumArea = 0;
+                                    int length = values.length;
+                                    for (int index = 0; index < length; index++) {
+                                    int height = values[index];
+                                    if (height <= 0) continue;
+                                    int leftLower = minimums.rightmostBelow(0, index - 1, height);
+                                    int leftSecondLower = leftLower < 0 ? -1
+                                        : minimums.rightmostBelow(0, leftLower - 1, height);
+                                    int rightLower = minimums.leftmostBelow(index + 1, length - 1, height);
+                                    int rightSecondLower = rightLower < 0 ? -1
+                                        : minimums.leftmostBelow(rightLower + 1, length - 1, height);
+                                    int normalLeft = leftLower + 1;
+                                    int normalRight = rightLower < 0 ? length - 1 : rightLower - 1;
+                                    maximumArea = Math.max(maximumArea,
+                                        (long) height * (normalRight - normalLeft + 1));
+                                    if (leftLower >= 0) {
+                                        int left = leftSecondLower + 1;
+                                        int right = rightLower < 0 ? length - 1 : rightLower - 1;
+                                        maximumArea = Math.max(maximumArea,
+                                            (long) height * Math.max(0, right - left));
+                                    }
+                                    if (rightLower >= 0) {
+                                        int left = leftLower + 1;
+                                        int right = rightSecondLower < 0 ? length - 1 : rightSecondLower - 1;
+                                        maximumArea = Math.max(maximumArea,
+                                            (long) height * Math.max(0, right - left));
+                                    }
+                                    }
+                                    return maximumArea;
+                                }
+
+                                static class MinSegmentTree {
+                                    final int length;
+                                    final int leafCount;
+                                    final int[] minimum;
+
+                                    MinSegmentTree(int[] values) {
+                                        length = values.length;
+                                        int leaves = 1;
+                                        while (leaves < length) leaves *= 2;
+                                        leafCount = leaves;
+                                        minimum = new int[leafCount * 2];
+                                        java.util.Arrays.fill(minimum, Integer.MAX_VALUE);
+                                        System.arraycopy(values, 0, minimum, leafCount, length);
+                                        for (int index = leafCount - 1; index > 0; index--) {
+                                            minimum[index] = Math.min(minimum[index * 2], minimum[index * 2 + 1]);
+                                        }
+                                    }
+
+                                    int rightmostBelow(int queryLeft, int queryRight, int threshold) {
+                                        if (queryLeft > queryRight) return -1;
+                                        return rightmostBelow(1, 0, leafCount - 1, queryLeft, queryRight, threshold);
+                                    }
+
+                                    int rightmostBelow(int node, int left, int right, int queryLeft, int queryRight,
+                                            int threshold) {
+                                        if (right < queryLeft || left > queryRight || minimum[node] >= threshold) {
+                                            return -1;
+                                        }
+                                        if (left == right) return left < length ? left : -1;
+                                        int middle = left + (right - left) / 2;
+                                        int found = rightmostBelow(node * 2 + 1, middle + 1, right,
+                                                queryLeft, queryRight, threshold);
+                                        return found >= 0 ? found : rightmostBelow(node * 2, left, middle,
+                                                queryLeft, queryRight, threshold);
+                                    }
+
+                                    int leftmostBelow(int queryLeft, int queryRight, int threshold) {
+                                        if (queryLeft > queryRight) return -1;
+                                        return leftmostBelow(1, 0, leafCount - 1, queryLeft, queryRight, threshold);
+                                    }
+
+                                    int leftmostBelow(int node, int left, int right, int queryLeft, int queryRight,
+                                            int threshold) {
+                                        if (right < queryLeft || left > queryRight || minimum[node] >= threshold) {
+                                            return -1;
+                                        }
+                                        if (left == right) return left < length ? left : -1;
+                                        int middle = left + (right - left) / 2;
+                                        int found = leftmostBelow(node * 2, left, middle,
+                                                queryLeft, queryRight, threshold);
+                                        return found >= 0 ? found : leftmostBelow(node * 2 + 1, middle + 1, right,
+                                                queryLeft, queryRight, threshold);
+                                    }
+                                }
+                                """,
+                        "maxAreaAfterRemovingOneBar([3, 1, 3])", "6", () -> {
+                            List<Integer> heights = List.of(3, 1, 3);
+                            long area = MaxAreaUnderHistogramAfterRemovingOneBar
+                                    .maxAreaAfterRemovingOneBar(heights);
+                            System.out.printf(
+                                    "Max Area Under Histogram After Removing One Bar%nInput: %s%nOutput: %d%n%n",
+                                    heights, area);
                         }));
     }
 
