@@ -1,6 +1,10 @@
 import arraysandbasics.CountAbovePreviousAverage;
 import arraysandbasics.MergeIntervals;
 import arraysandbasics.SubarraySumBoundedMax;
+import linkedlists.RemoveKthFromEnd;
+import linkedlists.RemoveConsecutiveDuplicatesFromSortedLinkedList;
+import linkedlists.ReverseEvenIndexedNodesAndAppend;
+import linkedlists.data.SinglyLinkedListNode;
 import stringsandpatterns.MaxUniqueSubstringLengthInSession;
 import stringsandpatterns.PalindromeByFilteringNonLetters;
 import stringsandpatterns.SmallestSubstringContainingAllPatterns;
@@ -131,7 +135,7 @@ public class JavaPractice {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 0;
-        JLabel number = new JLabel("05");
+        JLabel number = new JLabel("11");
         number.setFont(DISPLAY.deriveFont(30f));
         number.setForeground(INK);
         stamp.add(number, constraints);
@@ -169,7 +173,7 @@ public class JavaPractice {
         JPanel filters = new JPanel();
         filters.setBackground(PAPER);
         for (String topic : Arrays.asList("All", "Loops", "Strings and Pattern Matching", "Arrays",
-                "Arrays and Basic Problem Solving")) {
+                "Arrays and Basic Problem Solving", "Linked Lists")) {
             String label = topic.equals("Arrays and Basic Problem Solving") ? "Arrays + Basics"
                     : topic.equals("Strings and Pattern Matching") ? "Strings + Patterns" : topic;
             JButton filter = new JButton(label);
@@ -607,6 +611,125 @@ public class JavaPractice {
                             long result = SubarraySumBoundedMax.countSubarrays(nums, 3, 2);
                             System.out.printf("Subarrays with Given Sum and Bounded Maximum%nInput: %s%nOutput: %d%n%n",
                                     nums, result);
+                        }),
+                new Challenge("09", "One-Pass Removal of k-th Node from End", "Linked Lists", "Medium",
+                        "Given the head of a singly linked list and an offset k from the end, remove that node in one traversal and return the new head. Offset 0 is the last node. If k is invalid, return the original list.",
+                        "RemoveKthFromEnd.java",
+                        """
+                                static SinglyLinkedListNode removeKthFromEnd(SinglyLinkedListNode head, int k) {
+                                    if (k < 0) return head;
+                                    SinglyLinkedListNode sentinel = new SinglyLinkedListNode(0);
+                                    sentinel.next = head;
+                                    SinglyLinkedListNode fast = head;
+                                    for (int index = 0; index < k; index++) {
+                                        if (fast == null) return head;
+                                        fast = fast.next;
+                                    }
+                                    if (fast == null) return head;
+                                    fast = fast.next;
+                                    SinglyLinkedListNode slow = sentinel;
+                                    while (fast != null) {
+                                        fast = fast.next;
+                                        slow = slow.next;
+                                    }
+                                    slow.next = slow.next.next;
+                                    return sentinel.next;
+                                }
+                                """,
+                        "removeKthFromEnd(1 -> 2 -> 3 -> 4 -> 5, 1)", "1 -> 2 -> 3 -> 5", () -> {
+                            SinglyLinkedListNode head = new SinglyLinkedListNode(1);
+                            head.next = new SinglyLinkedListNode(2);
+                            head.next.next = new SinglyLinkedListNode(3);
+                            head.next.next.next = new SinglyLinkedListNode(4);
+                            head.next.next.next.next = new SinglyLinkedListNode(5);
+                            SinglyLinkedListNode result = RemoveKthFromEnd.removeKthFromEnd(head, 1);
+                            StringBuilder values = new StringBuilder();
+                            for (SinglyLinkedListNode node = result; node != null; node = node.next) {
+                                if (values.length() > 0)
+                                    values.append(" -> ");
+                                values.append(node.data);
+                            }
+                            System.out.printf("One-Pass Removal of k-th Node from End%nOutput: %s%n%n", values);
+                        }),
+                new Challenge("10", "Reverse Even-Indexed Nodes and Append", "Linked Lists", "Medium",
+                        "Given a singly linked list, extract all even-indexed nodes (using zero-based indices), reverse their order, and append them to the end of the list in one traversal. Return the head of the modified list.",
+                        "ReverseEvenIndexedNodesAndAppend.java",
+                        """
+                                static SinglyLinkedListNode reverseEvenIndexedNodesAndAppend(SinglyLinkedListNode head) {
+                                    SinglyLinkedListNode retainedSentinel = new SinglyLinkedListNode(0);
+                                    SinglyLinkedListNode retainedTail = retainedSentinel;
+                                    SinglyLinkedListNode reversedEven = null;
+                                    SinglyLinkedListNode current = head;
+                                    int index = 0;
+                                    while (current != null) {
+                                        SinglyLinkedListNode next = current.next;
+                                        if (index % 2 == 0) {
+                                            current.next = reversedEven;
+                                            reversedEven = current;
+                                        } else {
+                                            retainedTail.next = current;
+                                            retainedTail = current;
+                                            retainedTail.next = null;
+                                        }
+                                        current = next;
+                                        index++;
+                                    }
+                                    if (retainedTail == retainedSentinel) return reversedEven;
+                                    retainedTail.next = reversedEven;
+                                    return retainedSentinel.next;
+                                }
+                                """,
+                        "reverseEvenIndexedNodesAndAppend(1 -> 2 -> 3 -> 4 -> 5 -> 6)",
+                        "2 -> 4 -> 6 -> 5 -> 3 -> 1", () -> {
+                            SinglyLinkedListNode head = new SinglyLinkedListNode(1);
+                            SinglyLinkedListNode tail = head;
+                            for (int value = 2; value <= 6; value++) {
+                                tail.next = new SinglyLinkedListNode(value);
+                                tail = tail.next;
+                            }
+                            SinglyLinkedListNode result = ReverseEvenIndexedNodesAndAppend
+                                    .reverseEvenIndexedNodesAndAppend(head);
+                            StringBuilder values = new StringBuilder();
+                            for (SinglyLinkedListNode node = result; node != null; node = node.next) {
+                                if (values.length() > 0)
+                                    values.append(" -> ");
+                                values.append(node.data);
+                            }
+                            System.out.printf("Reverse Even-Indexed Nodes and Append%nOutput: %s%n%n", values);
+                        }),
+                new Challenge("11", "Remove Consecutive Duplicates from Sorted Linked List", "Linked Lists", "Easy",
+                        "Write a function \"deleteDuplicates\" that removes consecutive duplicate nodes in-place, retaining only the first node of each code. Return the head of the resulting list.",
+                        "RemoveConsecutiveDuplicatesFromSortedLinkedList.java",
+                        """
+                                static SinglyLinkedListNode deleteDuplicates(SinglyLinkedListNode head) {
+                                    SinglyLinkedListNode current = head;
+                                    while (current != null && current.next != null) {
+                                        if (current.data == current.next.data) {
+                                            current.next = current.next.next;
+                                        } else {
+                                            current = current.next;
+                                        }
+                                    }
+                                    return head;
+                                }
+                                """,
+                        "deleteDuplicates(1 -> 1 -> 2 -> 3 -> 3 -> 4)", "1 -> 2 -> 3 -> 4", () -> {
+                            SinglyLinkedListNode head = new SinglyLinkedListNode(1);
+                            head.next = new SinglyLinkedListNode(1);
+                            head.next.next = new SinglyLinkedListNode(2);
+                            head.next.next.next = new SinglyLinkedListNode(3);
+                            head.next.next.next.next = new SinglyLinkedListNode(3);
+                            head.next.next.next.next.next = new SinglyLinkedListNode(4);
+                            SinglyLinkedListNode result = RemoveConsecutiveDuplicatesFromSortedLinkedList
+                                    .deleteDuplicates(head);
+                            StringBuilder values = new StringBuilder();
+                            for (SinglyLinkedListNode node = result; node != null; node = node.next) {
+                                if (values.length() > 0)
+                                    values.append(" -> ");
+                                values.append(node.data);
+                            }
+                            System.out.printf("Remove Consecutive Duplicates from Sorted Linked List%nOutput: %s%n%n",
+                                    values);
                         }));
     }
 
