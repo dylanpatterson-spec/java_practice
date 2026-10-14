@@ -16,6 +16,8 @@ Java source files live in category packages under `src`, and compiled classes ar
 
 The `stacksandqueues` category includes `ValidateProperlyNestedBrackets`; run it with `java -cp classes stacksandqueues.ValidateProperlyNestedBrackets`.
 
+The `binarysearch` category includes `TargetIndexSearch`, `PivotedSearch`, and `MedianOfTwoCircularlySortedLogs`; run them with `java -cp classes binarysearch.TargetIndexSearch`, `java -cp classes binarysearch.PivotedSearch`, and `java -cp classes binarysearch.MedianOfTwoCircularlySortedLogs`.
+
 It also includes `NextGreaterElementWithPositionOffset`; run it with `java -cp classes stacksandqueues.NextGreaterElementWithPositionOffset`.
 
 `MaxAreaUnderHistogramAfterRemovingOneBar` is also in `stacksandqueues`; run it with `java -cp classes stacksandqueues.MaxAreaUnderHistogramAfterRemovingOneBar`.
@@ -28,6 +30,9 @@ Unit tests mirror the source package structure under `test`. Compile the sources
 javac -d classes (Get-ChildItem -Recurse -Path src,test -Filter *.java).FullName
 java -cp classes arraysandbasics.CountAbovePreviousAverageTest
 java -cp classes arraysandbasics.MergeIntervalsTest
+java -cp classes binarysearch.TargetIndexSearchTest
+java -cp classes binarysearch.PivotedSearchTest
+java -cp classes binarysearch.MedianOfTwoCircularlySortedLogsTest
 java -cp classes stacksandqueues.ValidateProperlyNestedBracketsTest
 java -cp classes stacksandqueues.NextGreaterElementWithPositionOffsetTest
 java -cp classes stacksandqueues.MaxAreaUnderHistogramAfterRemovingOneBarTest

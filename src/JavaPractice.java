@@ -1,6 +1,9 @@
 import arraysandbasics.CountAbovePreviousAverage;
 import arraysandbasics.MergeIntervals;
 import arraysandbasics.SubarraySumBoundedMax;
+import binarysearch.MedianOfTwoCircularlySortedLogs;
+import binarysearch.PivotedSearch;
+import binarysearch.TargetIndexSearch;
 import linkedlists.RemoveKthFromEnd;
 import linkedlists.RemoveConsecutiveDuplicatesFromSortedLinkedList;
 import linkedlists.ReverseEvenIndexedNodesAndAppend;
@@ -138,7 +141,7 @@ public class JavaPractice {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 0;
-        JLabel number = new JLabel("14");
+        JLabel number = new JLabel("16");
         number.setFont(DISPLAY.deriveFont(30f));
         number.setForeground(INK);
         stamp.add(number, constraints);
@@ -176,7 +179,7 @@ public class JavaPractice {
         JPanel filters = new JPanel();
         filters.setBackground(PAPER);
         for (String topic : Arrays.asList("All", "Loops", "Strings and Pattern Matching", "Arrays",
-                "Arrays and Basic Problem Solving", "Linked Lists", "Stacks and Queues")) {
+                "Arrays and Basic Problem Solving", "Linked Lists", "Stacks and Queues", "Binary Search")) {
             String label = topic.equals("Arrays and Basic Problem Solving") ? "Arrays + Basics"
                     : topic.equals("Strings and Pattern Matching") ? "Strings + Patterns"
                             : topic.equals("Stacks and Queues") ? "Stacks + Queues" : topic;
@@ -520,21 +523,116 @@ public class JavaPractice {
                                     "Smallest Substring Containing All Patterns%nInput: %s%nOutput: %s%n%n",
                                     S, window);
                         }),
-                new Challenge("05", "Binary Search", "Arrays", "Medium",
-                        "Find a target in a sorted array by halving the search range each step.", "BinarySearch.java",
+                new Challenge("05", "Target Index Search", "Binary Search", "Easy",
+                        "Given a sorted list of distinct integers and a target value, return the index of the target or -1 if not found.",
+                        "TargetIndexSearch.java",
                         """
-                                static int binarySearch(int[] values, int target) {
+                                static int searchTargetIndex(List<Integer> nums, int target) {
+                                    if (nums == null) return -1;
+                                            int low = 0;
+                                    int high = nums.size() - 1;
+                                            while (low <= high) {
+                                                int middle = low + (high - low) / 2;
+                                        if (nums.get(middle) == target) return middle;
+                                        if (nums.get(middle) < target) low = middle + 1;
+                                                else high = middle - 1;
+                                            }
+                                            return -1;
+                                }""", "searchTargetIndex(List.of(1, 3, 5, 7, 9), 7)", "3", () -> {
+                            List<Integer> nums = List.of(1, 3, 5, 7, 9);
+                            int index = TargetIndexSearch.searchTargetIndex(nums, 7);
+                            System.out.printf("Target Index Search%nInput: %s, target: %d%nOutput: %d%n%n",
+                                    nums, 7, index);
+                        }),
+                new Challenge("06", "Pivoted Search", "Binary Search", "Medium",
+                        "Given a sorted array of unique integers that has been rotated at an unknown pivot, find the index of a target value or return -1 if not found.",
+                        "PivotedSearch.java",
+                        """
+                                static int searchPivoted(List<Integer> nums, int target) {
+                                    if (nums == null) return -1;
                                     int low = 0;
-                                    int high = values.length - 1;
+                                    int high = nums.size() - 1;
                                     while (low <= high) {
                                         int middle = low + (high - low) / 2;
-                                        if (values[middle] == target) return middle;
-                                        if (values[middle] < target) low = middle + 1;
-                                        else high = middle - 1;
+                                        int middleValue = nums.get(middle);
+                                        if (middleValue == target) return middle;
+                                        int lowValue = nums.get(low);
+                                        int highValue = nums.get(high);
+                                        if (lowValue <= middleValue) {
+                                            if (lowValue <= target && target < middleValue) high = middle - 1;
+                                            else low = middle + 1;
+                                        } else if (middleValue < target && target <= highValue) {
+                                            low = middle + 1;
+                                        } else high = middle - 1;
                                     }
                                     return -1;
-                                }""", "binarySearch([1, 3, 5, 7, 9], 7)", "3"),
-                new Challenge("06", "Count Elements Greater Than Previous Average", "Arrays and Basic Problem Solving",
+                                }
+                                """, "searchPivoted(List.of(4, 5, 6, 7, 0, 1, 2), 0)", "4", () -> {
+                            List<Integer> nums = List.of(4, 5, 6, 7, 0, 1, 2);
+                            int index = PivotedSearch.searchPivoted(nums, 0);
+                            System.out.printf("Pivoted Search%nInput: %s, target: %d%nOutput: %d%n%n",
+                                    nums, 0, index);
+                        }),
+                new Challenge("07", "Median of Two Circularly Sorted Logs", "Binary Search", "Hard",
+                        "Given two rotated sorted lists that may contain duplicate long values, return the lower middle value of their merged data. For even totals, return the first of the two middle values. Duplicate-safe pivot discovery takes O(n + m) worst-case time; the algorithm uses O(1) extra space.",
+                        "MedianOfTwoCircularlySortedLogs.java",
+                        """
+                                static long findMedian(List<Long> first, List<Long> second) {
+                                    int firstPivot = findPivot(first);
+                                    int secondPivot = findPivot(second);
+                                    if (first.size() > second.size()) {
+                                        List<Long> temporaryList = first;
+                                        first = second;
+                                        second = temporaryList;
+                                        int temporaryPivot = firstPivot;
+                                        firstPivot = secondPivot;
+                                        secondPivot = temporaryPivot;
+                                    }
+                                    int firstSize = first.size();
+                                    int secondSize = second.size();
+                                    int leftSize = (firstSize + secondSize + 1) / 2;
+                                    int low = Math.max(0, leftSize - secondSize);
+                                    int high = Math.min(firstSize, leftSize);
+                                    while (low <= high) {
+                                        int firstCut = low + (high - low) / 2;
+                                        int secondCut = leftSize - firstCut;
+                                        long firstLeft = firstCut == 0 ? Long.MIN_VALUE
+                                            : sortedValue(first, firstPivot, firstCut - 1);
+                                        long firstRight = firstCut == firstSize ? Long.MAX_VALUE
+                                            : sortedValue(first, firstPivot, firstCut);
+                                        long secondLeft = secondCut == 0 ? Long.MIN_VALUE
+                                            : sortedValue(second, secondPivot, secondCut - 1);
+                                        long secondRight = secondCut == secondSize ? Long.MAX_VALUE
+                                            : sortedValue(second, secondPivot, secondCut);
+                                        if (firstLeft <= secondRight && secondLeft <= firstRight) {
+                                            return Math.max(firstLeft, secondLeft);
+                                        }
+                                        if (firstLeft > secondRight) high = firstCut - 1;
+                                        else low = firstCut + 1;
+                                    }
+                                    throw new IllegalArgumentException("Invalid rotated sorted lists.");
+                                }
+
+                                static int findPivot(List<Long> values) {
+                                    for (int index = 1; index < values.size(); index++) {
+                                        if (values.get(index - 1) > values.get(index)) return index;
+                                    }
+                                    return 0;
+                                }
+
+                                static long sortedValue(List<Long> values, int pivot, int index) {
+                                    return values.get((pivot + index) % values.size());
+                                }
+                                """,
+                        "findMedian(List.of(4L, 5L, 1L, 2L, 3L), List.of(8L, 9L, 6L, 7L))", "5", () -> {
+                            List<Long> first = List.of(4L, 5L, 1L, 2L, 3L);
+                            List<Long> second = List.of(8L, 9L, 6L, 7L);
+                            long median = MedianOfTwoCircularlySortedLogs.findMedian(first, second);
+                            System.out.printf(
+                                    "Median of Two Circularly Sorted Logs%nInput: %s and %s%nOutput: %d%n%n",
+                                    first, second, median);
+                        }),
+                new Challenge("08", "Count Elements Greater Than Previous Average", "Arrays and Basic Problem Solving",
                         "Easy",
                         "Given a list of positive integers, return the number of elements strictly greater than the average of all previous elements. Skip the first element.",
                         "CountAbovePreviousAverage.java",
@@ -556,7 +654,7 @@ public class JavaPractice {
                             System.out.printf("Count Elements Greater Than Previous Average%nInput: %s%nOutput: %d%n%n",
                                     responseTimes, result);
                         }),
-                new Challenge("07", "Merge and Sort Intervals", "Arrays and Basic Problem Solving", "Medium",
+                new Challenge("09", "Merge and Sort Intervals", "Arrays and Basic Problem Solving", "Medium",
                         "Given an array of intervals [startTime, endTime], merge all overlapping intervals and return a sorted array of non-overlapping intervals.",
                         "MergeIntervals.java",
                         """
@@ -586,7 +684,7 @@ public class JavaPractice {
                             System.out.printf("Merge and Sort Intervals%nInput: %s%nOutput: %s%n%n",
                                     intervals, result);
                         }),
-                new Challenge("08", "Subarrays with Given Sum and Bounded Maximum",
+                new Challenge("10", "Subarrays with Given Sum and Bounded Maximum",
                         "Arrays and Basic Problem Solving", "Medium",
                         "Given a list of integers nums and long integers k and M, count the number of contiguous subarrays whose sum equals k and whose maximum element is at most M.",
                         "SubarraySumBoundedMax.java",
@@ -616,7 +714,7 @@ public class JavaPractice {
                             System.out.printf("Subarrays with Given Sum and Bounded Maximum%nInput: %s%nOutput: %d%n%n",
                                     nums, result);
                         }),
-                new Challenge("09", "One-Pass Removal of k-th Node from End", "Linked Lists", "Medium",
+                new Challenge("11", "One-Pass Removal of k-th Node from End", "Linked Lists", "Medium",
                         "Given the head of a singly linked list and an offset k from the end, remove that node in one traversal and return the new head. Offset 0 is the last node. If k is invalid, return the original list.",
                         "RemoveKthFromEnd.java",
                         """
@@ -655,7 +753,7 @@ public class JavaPractice {
                             }
                             System.out.printf("One-Pass Removal of k-th Node from End%nOutput: %s%n%n", values);
                         }),
-                new Challenge("10", "Reverse Even-Indexed Nodes and Append", "Linked Lists", "Medium",
+                new Challenge("12", "Reverse Even-Indexed Nodes and Append", "Linked Lists", "Medium",
                         "Given a singly linked list, extract all even-indexed nodes (using zero-based indices), reverse their order, and append them to the end of the list in one traversal. Return the head of the modified list.",
                         "ReverseEvenIndexedNodesAndAppend.java",
                         """
@@ -701,7 +799,7 @@ public class JavaPractice {
                             }
                             System.out.printf("Reverse Even-Indexed Nodes and Append%nOutput: %s%n%n", values);
                         }),
-                new Challenge("11", "Remove Consecutive Duplicates from Sorted Linked List", "Linked Lists", "Easy",
+                new Challenge("13", "Remove Consecutive Duplicates from Sorted Linked List", "Linked Lists", "Easy",
                         "Write a function \"deleteDuplicates\" that removes consecutive duplicate nodes in-place, retaining only the first node of each code. Return the head of the resulting list.",
                         "RemoveConsecutiveDuplicatesFromSortedLinkedList.java",
                         """
@@ -735,7 +833,7 @@ public class JavaPractice {
                             System.out.printf("Remove Consecutive Duplicates from Sorted Linked List%nOutput: %s%n%n",
                                     values);
                         }),
-                new Challenge("12", "Validate Properly Nested Brackets", "Stacks and Queues", "Easy",
+                new Challenge("14", "Validate Properly Nested Brackets", "Stacks and Queues", "Easy",
                         "Given a string, check if all brackets ('()', '{}', '[]') are properly matched and nested. Return true if valid, otherwise return false.",
                         "ValidateProperlyNestedBrackets.java",
                         """
@@ -762,7 +860,7 @@ public class JavaPractice {
                             System.out.printf("Validate Properly Nested Brackets%nInput: %s%nOutput: %b%n%n",
                                     input, result);
                         }),
-                new Challenge("13", "Next Greater Element with Position Offset", "Stacks and Queues", "Medium",
+                new Challenge("15", "Next Greater Element with Position Offset", "Stacks and Queues", "Medium",
                         "Given an integer array readings, return an array result where result[i] = [value, distance], with value being the next greater element to the right of readings[i] and distance being the index difference. If no greater element exists, return [-1, -1].",
                         "NextGreaterElementWithPositionOffset.java",
                         """
@@ -792,7 +890,7 @@ public class JavaPractice {
                             System.out.printf("Next Greater Element with Position Offset%nInput: %s%nOutput: %s%n%n",
                                     readings, result);
                         }),
-                new Challenge("14", "Max Area Under Histogram After Removing One Bar", "Stacks and Queues", "Hard",
+                new Challenge("16", "Max Area Under Histogram After Removing One Bar", "Stacks and Queues", "Hard",
                         "Given a list of integers heights, find the maximum rectangle area under the histogram after optionally removing at most one element.",
                         "MaxAreaUnderHistogramAfterRemovingOneBar.java",
                         """
